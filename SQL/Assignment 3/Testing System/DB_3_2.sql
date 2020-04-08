@@ -10,7 +10,7 @@ COMMIT;
 DROP TABLE IF EXISTS Department2;
 CREATE TABLE Department2(
 	DepartmentID 			TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    DepartmentName 			NVARCHAR(20) NOT NULL
+    DepartmentName 			NVARCHAR(20) NOT NULL UNIQUE
 );
 
 -- Tao bang 2: Position2
@@ -29,7 +29,7 @@ CREATE TABLE Account2(
     FullName				VARCHAR(50) NOT NULL,
     DepartmentID 			TINYINT UNSIGNED NOT NULL,
     PositionID				TINYINT UNSIGNED NOT NULL,
-    CreateDate				DATE NOT NULL,
+    CreateDate				DATETIME DEFAULT NOW(),
     FOREIGN KEY(DepartmentID) REFERENCES Department2(DepartmentID),
     FOREIGN KEY(PositionID) REFERENCES Position2(PositionID)
 );
@@ -40,18 +40,20 @@ CREATE TABLE Group2(
 	GroupID					TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     GroupName				NVARCHAR(50) NOT NULL,
     CreatorID				TINYINT UNSIGNED NOT NULL UNIQUE KEY,
-    CreateDate				DATE NOT NULL
+    CreateDate				DATETIME DEFAULT NOW()
 );
 
 -- Tao bang 5: GroupAccount2
 DROP TABLE IF EXISTS GroupAccount2;
 CREATE TABLE GroupAccount2(
-	GroupID					TINYINT UNSIGNED NOT NULL PRIMARY KEY,
+	GroupAccountID			TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,			
+	GroupID					TINYINT UNSIGNED NOT NULL,
     AccountID				TINYINT UNSIGNED NOT NULL,
-    FOREIGN KEY (AccountID) REFERENCES Account2(AccountID),
-    JoinDate				DATE NOT NULL
+    JoinDate				DATETIME DEFAULT NOW(),
+	FOREIGN KEY (AccountID) REFERENCES Account2(AccountID),
+    FOREIGN KEY (GroupID) REFERENCES Group2(GroupID)
 );
-
+                            
 -- Tao bang 6: TypeQuestion2
 DROP TABLE IF EXISTS TypeQuestion2;
 CREATE TABLE TypeQuestion2 (
@@ -63,7 +65,7 @@ CREATE TABLE TypeQuestion2 (
 DROP TABLE IF EXISTS CategoryQuestion2;
 CREATE TABLE CategoryQuestion2(
     CategoryID				TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    CategoryName			NVARCHAR(50) NOT NULL
+    CategoryName			NVARCHAR(50) NOT NULL UNIQUE
 );
 
 -- Tao bang 8: Question2
@@ -74,7 +76,7 @@ CREATE TABLE Question2(
     CategoryID				TINYINT UNSIGNED NOT NULL,
     TypeID					TINYINT UNSIGNED NOT NULL,
     CreatorID				TINYINT UNSIGNED NOT NULL UNIQUE KEY,
-    CreateDate				DATE NOT NULL,
+    CreateDate				DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY(CategoryID) 	REFERENCES CategoryQuestion2(CategoryID),
     FOREIGN KEY(TypeID) 	REFERENCES TypeQuestion2(TypeID)
 );
@@ -93,41 +95,44 @@ CREATE TABLE Answer2(
 DROP TABLE IF EXISTS Exam2;
 CREATE TABLE Exam2(
     ExamID					TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    Code					VARCHAR(10) UNIQUE KEY NOT NULL,
+    Code					CHAR(7) UNIQUE KEY NOT NULL,
     Title					NVARCHAR(50) NOT NULL,
     CategoryID				TINYINT UNSIGNED NOT NULL,
     Duration				TINYINT UNSIGNED NOT NULL,
     CreatorID				TINYINT UNSIGNED NOT NULL UNIQUE KEY,
-    CreateDate				DATE NOT NULL,
+    CreateDate				DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY(CategoryID) 	REFERENCES CategoryQuestion2(CategoryID)
 );
 
 -- Tao bang 11: ExamQuestion2
 DROP TABLE IF EXISTS ExamQuestion2;
 CREATE TABLE ExamQuestion2(
-    ExamID				TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-	QuestionID			TINYINT UNSIGNED NOT NULL
+    ExamID				TINYINT UNSIGNED AUTO_INCREMENT,
+	QuestionID			TINYINT UNSIGNED NOT NULL,
+    PRIMARY KEY(ExamID,QuestionID)
 );
 
 /*============================== THÊM DỮ LIỆU VÀO BẢNG =================================*/
 /*======================================================================================*/
 -- Thêm dữ liệu cho bảng Department2
-INSERT INTO Department2(DepartmentName) VALUE (N'Marketing'); 
-INSERT INTO Department2(DepartmentName) VALUE (N'Sale'); 
-INSERT INTO Department2(DepartmentName) VALUE (N'Bảo vệ'); 
-INSERT INTO Department2(DepartmentName) VALUE (N'Nhân sự'); 
-INSERT INTO Department2(DepartmentName) VALUE (N'Kỹ thuật'); 
-INSERT INTO Department2(DepartmentName) VALUE (N'Tài chính'); 
-INSERT INTO Department2(DepartmentName) VALUE (N'Phò giám đốc'); 
-INSERT INTO Department2(DepartmentName) VALUE (N'Giám đốc'); 
-INSERT INTO Department2(DepartmentName) VALUE (N'Thư kí'); 
-INSERT INTO Department2(DepartmentName) VALUE (N'Bán hàng'); 
+INSERT INTO Department2(DepartmentName) VALUE 
+						(N'Marketing'	),
+						(N'Sale'		),
+						(N'Bảo vệ'		),
+						(N'Nhân sự'		),
+						(N'Kỹ thuật'	),
+						(N'Tài chính'	),
+						(N'Phó giám đốc'),
+						(N'Giám đốc'	),
+						(N'Thư kí'		),
+						(N'Bán hàng'	);
     
 -- Thêm dữ liệu cho bảng position2
-INSERT INTO Position2(PositionName) VALUE ('Dev'); 
-INSERT INTO Position2(PositionName) VALUE ('Test'); 
-INSERT INTO Position2(PositionName) VALUE ('Scrum Master'); 
-INSERT INTO Position2(PositionName) VALUE ('PM'); 
+INSERT INTO Position2	(PositionName	) 
+VALUE 					('Dev'			),
+						('Test'			),
+						('Scrum Master'	),
+						('PM'			); 
 
 
 -- Thêm dữ liệu cho bảng Account2
@@ -135,26 +140,26 @@ INSERT INTO Account2(Email								, Username			, FullName				, DepartmentID	, Po
 VALUE 				('haidang29productions@gmail.com'	, 'dangblack'		,'Nguyen Hai Dang'		,   '5'			,   '1'		,'2020-03-05'),
 					('account1@gmail.com'				, 'quanganh'		,'Tong Quang Anh'		,   '1'			,   '2'		,'2020-03-05'),
                     ('account2@gmail.com'				, 'vanchien'		,'Nguyen Van Chien'		,   '2'			,   '3'		,'2020-03-07'),
-                    ('account3@gmail.com'				, 'cocoduongqua'	,'Duong Do'			,   '3'			,   '4'		,'2020-03-08'),
+                    ('account3@gmail.com'				, 'cocoduongqua'	,'Duong Do'				,   '3'			,   '4'		,'2020-03-08'),
                     ('account4@gmail.com'				, 'doccocaubai'		,'Nguyen Chien Thang'	,   '4'			,   '4'		,'2020-03-10'),
                     ('dapphatchetngay@gmail.com'		, 'khabanh'			,'Ngo Ba Kha'			,   '6'			,   '3'		,'2020-04-05'),
                     ('songcodaoly@gmail.com'			, 'huanhoahong'		,'Bui Xuan Huan'		,   '7'			,   '2'		,'2020-04-05'),
                     ('sontungmtp@gmail.com'				, 'tungnui'			,'Nguyen Thanh Tung'	,   '8'			,   '1'		,'2020-04-07'),
                     ('duongghuu@gmail.com'				, 'duongghuu'		,'Duong Van Huu'		,   '9'			,   '2'		,'2020-04-07'),
-                    ('vtiaccademy@gmail.com'			, 'vtiaccademy'		,'Vi Ti Ai'				,   '10'		,   '1'	,'2020-04-09');
+                    ('vtiaccademy@gmail.com'			, 'vtiaccademy'		,'Vi Ti Ai'				,   '10'		,   '1'		,'2020-04-09');
 
 -- Thêm dữ liệu cho bảng Group2
 INSERT INTO Group2	(  GroupName			, CreatorID		, CreateDate)
-VALUE 				(N'Testing System'		,   '5'			,'2019-03-05'),
-					(N'Developement'		,   '1'			,'2020-03-07'),
-                    (N'VTI Sale 01'			,   '2'			,'2020-03-09'),
-                    (N'VTI Sale 02'			,   '3'			,'2020-03-10'),
-                    (N'VTI Sale 02'			,   '4'			,'2020-03-28'),
-                    (N'VTI Creator'			,   '6'			,'2020-04-06'),
-                    (N'VTI Marketing 01'	,   '7'			,'2020-04-07'),
-                    (N'Management'			,   '8'			,'2020-04-08'),
-                    (N'Chat with love'		,   '9'			,'2020-04-09'),
-                    (N'Vi Ti Ai'			,   '10'		,'2020-04-10');
+VALUE 				(N'Testing System'		,   5			,'2019-03-05'),
+					(N'Developement'		,   1			,'2020-03-07'),
+                    (N'VTI Sale 01'			,   2			,'2020-03-09'),
+                    (N'VTI Sale 02'			,   3			,'2020-03-10'),
+                    (N'VTI Sale 02'			,   4			,'2020-03-28'),
+                    (N'VTI Creator'			,   6			,'2020-04-06'),
+                    (N'VTI Marketing 01'	,   7			,'2020-04-07'),
+                    (N'Management'			,   8			,'2020-04-08'),
+                    (N'Chat with love'		,   9			,'2020-04-09'),
+                    (N'Vi Ti Ai'			,   10			,'2020-04-10');
 
 -- Thêm dữ liệu cho bảng GroupAccount2
 INSERT INTO GroupAccount2	(  GroupID	, AccountID	, JoinDate	 )
@@ -171,22 +176,24 @@ VALUE 						(	1		,    1		,'2019-03-05'),
 
 
 -- Thêm dữ liệu cho bảng TypeQuestion2
-INSERT INTO TypeQuestion2(TypeName) VALUE ('Essay'); 
-INSERT INTO TypeQuestion2(TypeName) VALUE ('Multiple-Choice'); 
+INSERT INTO TypeQuestion2	(TypeName			) 
+VALUE 						('Essay'			), 
+							('Multiple-Choice'	); 
 
 
 -- Thêm dữ liệu cho CategoryQuestion2
-INSERT INTO CategoryQuestion2(CategoryName) VALUE ('Java'); 
-INSERT INTO CategoryQuestion2(CategoryName) VALUE ('ASP.NET'); 
-INSERT INTO CategoryQuestion2(CategoryName) VALUE ('ADO.NET'); 
-INSERT INTO CategoryQuestion2(CategoryName) VALUE ('SQL'); 
-INSERT INTO CategoryQuestion2(CategoryName) VALUE ('Postman'); 
-INSERT INTO CategoryQuestion2(CategoryName) VALUE ('Ruby'); 
-INSERT INTO CategoryQuestion2(CategoryName) VALUE ('Python'); 
-INSERT INTO CategoryQuestion2(CategoryName) VALUE ('C++'); 
-INSERT INTO CategoryQuestion2(CategoryName) VALUE ('C Sharp'); 
-INSERT INTO CategoryQuestion2(CategoryName) VALUE ('PHP'); 
-
+INSERT INTO CategoryQuestion2		(CategoryName	)
+VALUE 								('Java'			),
+									('ASP.NET'		),
+									('ADO.NET'		),
+									('SQL'			),
+									('Postman'		),
+									('Ruby'			),
+									('Python'		),
+									('C++'			),
+									('C Sharp'		),
+									('PHP'			);
+													
 -- Thêm bảng Question2
 INSERT INTO Question2	(Content			, CategoryID, TypeID		, CreatorID	, CreateDate )
 VALUE 					(N'Câu hỏi về Java'	,	1		,   '1'			,   '1'		,'2020-04-05'),
@@ -227,16 +234,17 @@ VALUE 				('VTIQ001'		, N'Đề thi C#'			,	1			,	60		,   '5'			,'2019-04-05'),
                     ('VTIQ010'		, N'Đề thi ASP.NET'		,	7			,	90		,   '10'		,'2020-04-08');
                     
 -- Thêm bảng ExamQuestion2
-INSERT INTO ExamQuestion2(QuestionID) VALUE (1); 
-INSERT INTO ExamQuestion2(QuestionID) VALUE (2); 
-INSERT INTO ExamQuestion2(QuestionID) VALUE (3); 
-INSERT INTO ExamQuestion2(QuestionID) VALUE (4); 
-INSERT INTO ExamQuestion2(QuestionID) VALUE (5); 
-INSERT INTO ExamQuestion2(QuestionID) VALUE (6); 
-INSERT INTO ExamQuestion2(QuestionID) VALUE (7); 
-INSERT INTO ExamQuestion2(QuestionID) VALUE (8); 
-INSERT INTO ExamQuestion2(QuestionID) VALUE (9); 
-INSERT INTO ExamQuestion2(QuestionID) VALUE (10); 
+INSERT INTO ExamQuestion2(QuestionID) 
+VALUE 						(1),
+							(2), 
+							(3), 
+							(4), 
+							(5), 
+							(6), 
+							(7), 
+							(8), 
+							(9), 
+							(10); 
 
 
 /*============================== TRUY VẤN DỮ LIỆU ======================================*/
@@ -247,11 +255,14 @@ INSERT INTO ExamQuestion2(QuestionID) VALUE (10);
 SELECT * FROM Department2;
 
 -- Question 3: Lấy ra id của phòng ban "Sale"
-SELECT DepartmentID FROM Department2 WHERE DepartmentName = N'Sale';
+SELECT 	DepartmentID 
+FROM 	Department2 
+WHERE 	DepartmentName = N'Sale';
 
 -- Question 4: lấy ra thông tin account có full name dài nhất và sắp xếp chúng theo thứ tự giảm dần
-SELECT * FROM Account2 
-WHERE LENGTH(Fullname) = (SELECT MAX(LENGTH(Fullname)) FROM Account2)
+SELECT 	* 
+FROM 	Account2 
+WHERE 	LENGTH(Fullname) = (SELECT MAX(LENGTH(Fullname)) FROM Account2)
 ORDER BY Fullname DESC;
 
 -- Question 5: Lấy ra thông tin account có full name dài nhất và thuộc phòng ban có id = 3
@@ -275,7 +286,8 @@ WHERE Duration >= 60 AND CreateDate < '2019-12-20';
 
 -- Question 9: Lấy ra 5 group được tạo gần đây nhất
 SELECT * FROM Group2
-ORDER BY CreateDate DESC LIMIT 5;
+ORDER BY CreateDate DESC 
+LIMIT 5;
 
 -- Question 10: Đếm số nhân viên thuộc department có id = 2
 SELECT COUNT(AccountID) AS 'SO NHAN VIEN' FROM Account2
@@ -289,9 +301,10 @@ WHERE (SUBSTRING_INDEX(FullName, ' ', -1)) LIKE 'D%o' ;
 DELETE FROM Exam2 WHERE CreateDate < '2019-12-20';
 ROLLBACK;
 -- Question 13: xóa tất cả các question có nội dung bắt đầu bằng từ "câu hỏi"
-SET FOREIGN_KEY_CHECKS=0;
-DELETE FROM Question2 WHERE (SUBSTRING_INDEX(Content,' ',2)) = 'Câu hỏi';
-SET FOREIGN_KEY_CHECKS=1;
+-- SET FOREIGN_KEY_CHECKS=0;
+DELETE FROM Question2 
+WHERE (SUBSTRING_INDEX(Content,' ',2)) = 'Câu hỏi';
+-- SET FOREIGN_KEY_CHECKS=1;
 
 -- Question 14: update thông tin của account có id = 5 thành tên "Nguyễn Bá Lộc" và email thành loc.nguyenba@vti.com.vn
 UPDATE Account2 SET Fullname = N'Nguyễn Bá Lộc', Email = 'loc.nguyenba@vti.com.vn'
