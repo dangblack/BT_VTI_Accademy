@@ -603,7 +603,15 @@ ON			Q.CreatorID = A.AccountID
 WHERE		SUBSTRING_INDEX(FullName,' ',1) = 'Nguyen';
 
 SELECT * FROM vw_QuesHoNguyen;
-
+-- Comman Table Expression
+WITH QuesHoNguyen AS
+(
+	SELECT 		Q.*, A.FullName
+	FROM 		Question Q INNER JOIN `Account` A
+	ON			Q.CreatorID = A.AccountID
+	WHERE		SUBSTRING_INDEX(FullName,' ',1) = 'Nguyen'
+)
+SELECT * FROM QuesHoNguyen;
 
 
 
