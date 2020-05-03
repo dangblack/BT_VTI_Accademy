@@ -1,7 +1,9 @@
-import Model.Account;
-import Model.Department;
-import Model.Gender;
-import Model.Group;
+package TestingSystem;
+
+import TestingSystem.Model.Account;
+import TestingSystem.Model.Department;
+import TestingSystem.Model.Gender;
+import TestingSystem.Model.Group;
 
 import java.util.ArrayList;
 import java.util.Collections;
