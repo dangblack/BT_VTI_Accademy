@@ -9,10 +9,10 @@ public class DatatypeCasting {
     }
 //    Question 1:
 //    Khai báo 2 số lương có kiểu dữ liệu là float.
-//    Khởi tạo Lương của Account 1 là 5240.5 $
-//    Khởi tạo Lương của Account 2 là 10970.055$
-//    Khai báo 1 số int để làm tròn Lương của Account 1 và in số int đó ra
-//    Khai báo 1 số int để làm tròn Lương của Account 2 và in số int đó ra
+//    Khởi tạo Lương của Model.Account 1 là 5240.5 $
+//    Khởi tạo Lương của Model.Account 2 là 10970.055$
+//    Khai báo 1 số int để làm tròn Lương của Model.Account 1 và in số int đó ra
+//    Khai báo 1 số int để làm tròn Lương của Model.Account 2 và in số int đó ra
     public static void Question1(){
         float Salary1;
         float Salary2;

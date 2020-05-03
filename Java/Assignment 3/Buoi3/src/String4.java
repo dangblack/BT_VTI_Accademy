@@ -22,6 +22,7 @@ public class String4 {
 //        Question16();
 //        Question17();
 //        Question18();
+        test();
     }
     //    Question 1:
 //    Nhập một xâu kí tự, đếm số lượng các từ trong xâu kí tự đó (các từ có
@@ -433,6 +434,32 @@ public static void Question17(){
         }
         System.out.println(chuoi);
     }
+    public static void test() {
+        Scanner kb = new Scanner (System.in);
+        String s1 = "";
 
+        System.out.println("Nhập chuỗi: ");
+        s1 = kb.nextLine();
+
+        uniqueCharacters(s1);
+    }
+    public static void uniqueCharacters(String test){
+        //Khai báo một string tạm
+        String temp = "";
+        //Chạy lấy từng kí tự trong chuỗi
+        for (int i = 0; i < test.length(); i++){
+            //Lấy kí tự
+            char ch = test.charAt(i);
+            //Hàm indexOf: Trả về chỉ số của giá trị ký tự đã cho. Không thấy sẽ ra -1
+            //Nếu không tìm thấy kí tự ch trong chuỗi tạm => Add kí tự vào chuỗi tạm
+            if (temp.indexOf(ch) < 0){
+                temp = temp + ch;
+            } else { //Nếu thấy rồi thì khởi tạo lại chuỗi tạm bằng hàm Replace
+                temp = temp.replace(String.valueOf(ch), "");
+            }
+        }
+        System.out.println(temp);
+
+    }
 }
 
