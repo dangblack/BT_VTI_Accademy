@@ -1,36 +1,35 @@
 /*
 ----VTI ACCADEMY HOMEWORK
 ----CREATE BY DANGBLACK
+----Vietcombank: 0301000405054
+----Momo: 0825294200
 */
-DROP DATABASE IF EXISTS TestingSystem1;
-CREATE DATABASE TestingSystem1;
-USE TestingSystem1;
-COMMIT;
+-- create database
+DROP DATABASE IF EXISTS TestingSystem;
+CREATE DATABASE TestingSystem;
+USE TestingSystem;
 
-/*============================== TẠO BẢNG DỮ LIỆU (10 BẢNG) =============================*/
-/*======================================================================================*/
-
--- Tao bang 1: Department
+-- create table 1: Department
 DROP TABLE IF EXISTS Department;
 CREATE TABLE Department(
 	DepartmentID 			TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    DepartmentName 			NVARCHAR(20) NOT NULL UNIQUE
+    DepartmentName 			NVARCHAR(30) NOT NULL UNIQUE KEY
 );
 
--- Tao bang 2: `Position`
-DROP TABLE IF EXISTS `Position`;
-CREATE TABLE `Position`(
+-- create table 2: Posittion
+DROP TABLE IF EXISTS Position;
+CREATE TABLE `Position` (
 	PositionID				TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    PositionName			ENUM('Dev','Test','Scrum Master','PM') NOT NULL
+    PositionName			ENUM('Dev','Test','Scrum Master','PM') NOT NULL UNIQUE KEY
 );
 
--- Tao bang 3: `Account`
+-- create table 3: Account
 DROP TABLE IF EXISTS `Account`;
 CREATE TABLE `Account`(
 	AccountID				TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     Email					VARCHAR(50) NOT NULL UNIQUE KEY,
     Username				VARCHAR(50) NOT NULL UNIQUE KEY,
-    FullName				VARCHAR(50) NOT NULL,
+    FullName				NVARCHAR(50) NOT NULL,
     DepartmentID 			TINYINT UNSIGNED NOT NULL,
     PositionID				TINYINT UNSIGNED NOT NULL,
     CreateDate				DATETIME DEFAULT NOW(),
@@ -38,84 +37,85 @@ CREATE TABLE `Account`(
     FOREIGN KEY(PositionID) REFERENCES `Position`(PositionID)
 );
 
--- Tao bang 4: `Group`
+-- create table 4: Group
 DROP TABLE IF EXISTS `Group`;
 CREATE TABLE `Group`(
 	GroupID					TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    GroupName				NVARCHAR(50) NOT NULL,
-    CreatorID				TINYINT UNSIGNED NOT NULL UNIQUE KEY,
+    GroupName				NVARCHAR(50) NOT NULL UNIQUE KEY,
+    CreatorID				TINYINT UNSIGNED NOT NULL,
     CreateDate				DATETIME DEFAULT NOW()
 );
 
--- Tao bang 5: Group`Account`
+-- create table 5: GroupAccount
 DROP TABLE IF EXISTS GroupAccount;
 CREATE TABLE GroupAccount(
-	GroupAccountID			TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,			
 	GroupID					TINYINT UNSIGNED NOT NULL,
     AccountID				TINYINT UNSIGNED NOT NULL,
     JoinDate				DATETIME DEFAULT NOW(),
-	FOREIGN KEY (AccountID) REFERENCES `Account`(AccountID),
-    FOREIGN KEY (GroupID) REFERENCES `Group`(GroupID)
-);
-                            
--- Tao bang 6: TypeQuestion
-DROP TABLE IF EXISTS TypeQuestion;
-CREATE TABLE TypeQuestion (
-    TypeID TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    TypeName ENUM('Essay','Multiple-Choice') NOT NULL
+    PRIMARY KEY (GroupID,AccountID)
 );
 
--- Tao bang 7: CategoryQuestion
+-- create table 6: TypeQuestion
+DROP TABLE IF EXISTS TypeQuestion;
+CREATE TABLE TypeQuestion (
+    TypeID 			TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    TypeName 		ENUM('Esay','Multiple-Choice') NOT NULL UNIQUE KEY
+);
+
+-- create table 7: CategoryQuestion
 DROP TABLE IF EXISTS CategoryQuestion;
 CREATE TABLE CategoryQuestion(
     CategoryID				TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    CategoryName			NVARCHAR(50) NOT NULL UNIQUE
+    CategoryName			NVARCHAR(50) NOT NULL UNIQUE KEY
 );
 
--- Tao bang 8: Question
+-- create table 8: Question
 DROP TABLE IF EXISTS Question;
 CREATE TABLE Question(
     QuestionID				TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    Content					NVARCHAR(50) NOT NULL,
+    Content					NVARCHAR(100) NOT NULL,
     CategoryID				TINYINT UNSIGNED NOT NULL,
     TypeID					TINYINT UNSIGNED NOT NULL,
     CreatorID				TINYINT UNSIGNED NOT NULL UNIQUE KEY,
-    CreateDate				DATETIME NOT NULL DEFAULT NOW(),
+    CreateDate				DATETIME DEFAULT NOW(),
     FOREIGN KEY(CategoryID) 	REFERENCES CategoryQuestion(CategoryID),
-    FOREIGN KEY(TypeID) 	REFERENCES TypeQuestion(TypeID)
+    FOREIGN KEY(TypeID) 		REFERENCES TypeQuestion(TypeID),
+    FOREIGN KEY(CreatorID) 		REFERENCES `Account`(AccountId)
 );
 
--- Tao bang 9: Answer
+-- create table 9: Answer
 DROP TABLE IF EXISTS Answer;
 CREATE TABLE Answer(
-    AnswerID				TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    Content					NVARCHAR(50) NOT NULL,
+    Answers					TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    Content					NVARCHAR(100) NOT NULL,
     QuestionID				TINYINT UNSIGNED NOT NULL,
-    isCorrect				BIT NOT NULL, -- 0: Sai, 1: Đúng
-    FOREIGN KEY(QuestionID) 	REFERENCES Question(QuestionID)
+    isCorrect				BIT DEFAULT 1,
+    FOREIGN KEY(QuestionID) REFERENCES Question(QuestionID)
 );
 
--- Tao bang 10: Exam
+-- create table 10: Exam
 DROP TABLE IF EXISTS Exam;
 CREATE TABLE Exam(
     ExamID					TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    Code					CHAR(7) UNIQUE KEY NOT NULL,
+    `Code`					CHAR(10) NOT NULL,
     Title					NVARCHAR(50) NOT NULL,
     CategoryID				TINYINT UNSIGNED NOT NULL,
     Duration				TINYINT UNSIGNED NOT NULL,
     CreatorID				TINYINT UNSIGNED NOT NULL,
-    CreateDate				DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY(CategoryID) 	REFERENCES CategoryQuestion(CategoryID)
+    CreateDate				DATETIME DEFAULT NOW(),
+    FOREIGN KEY(CategoryID) REFERENCES CategoryQuestion(CategoryID),
+    FOREIGN KEY(CreatorID) 	REFERENCES `Account`(AccountId)
 );
 
--- Tao bang 11: ExamQuestion
+-- create table 11: ExamQuestion
 DROP TABLE IF EXISTS ExamQuestion;
 CREATE TABLE ExamQuestion(
-    ExamID				TINYINT UNSIGNED AUTO_INCREMENT,
+    ExamID				TINYINT UNSIGNED NOT NULL,
 	QuestionID			TINYINT UNSIGNED NOT NULL,
-    PRIMARY KEY(ExamID,QuestionID)
+    FOREIGN KEY(QuestionID) REFERENCES Question(QuestionID),
+    FOREIGN KEY(ExamID) REFERENCES Exam(ExamID),
+    PRIMARY KEY (ExamID,QuestionID)
 );
-
 /*============================== THÊM DỮ LIỆU VÀO BẢNG =================================*/
 /*======================================================================================*/
 -- Thêm dữ liệu cho bảng Department
@@ -229,13 +229,13 @@ INSERT INTO Exam	(Code			, Title					, CategoryID	, Duration	, CreatorID		, Crea
 VALUE 				('VTIQ001'		, N'Đề thi C#'			,	1			,	60		,   '5'			,'2019-04-05'),
 					('VTIQ002'		, N'Đề thi PHP'			,	10			,	60		,   '1'			,'2019-04-05'),
                     ('VTIQ003'		, N'Đề thi C++'			,	9			,	120		,   '2'			,'2019-04-07'),
-                    ('VTIQ004'		, N'Đề thi Java'		,	6			,	60		,   '3'			,'2020-04-08'),
-                    ('VTIQ005'		, N'Đề thi Ruby'		,	5			,	120		,   '4'			,'2020-04-10'),
-                    ('VTIQ006'		, N'Đề thi Postman'		,	3			,	60		,   '6'			,'2020-04-05'),
-                    ('VTIQ007'		, N'Đề thi SQL'			,	2			,	60		,   '7'			,'2020-04-05'),
-                    ('VTIQ008'		, N'Đề thi Python'		,	8			,	60		,   '8'			,'2020-04-07'),
-                    ('VTIQ009'		, N'Đề thi ADO.NET'		,	4			,	90		,   '9'			,'2020-04-07'),
-                    ('VTIQ010'		, N'Đề thi ASP.NET'		,	7			,	90		,   '10'		,'2020-04-08');
+                    ('VTIQ004'		, N'Bài thi Java'		,	6			,	60		,   '3'			,'2020-04-08'),
+                    ('VTIQ005'		, N'Bài thi Ruby'		,	5			,	120		,   '4'			,'2020-04-10'),
+                    ('VTIQ006'		, N'Bài thi Postman'		,	3			,	60		,   '6'			,'2020-04-05'),
+                    ('VTIQ007'		, N'Bài thi SQL'			,	2			,	60		,   '7'			,'2020-04-05'),
+                    ('VTIQ008'		, N'Bài thi Python'		,	8			,	60		,   '8'			,'2020-04-07'),
+                    ('VTIQ009'		, N'Bài thi ADO.NET'		,	4			,	90		,   '9'			,'2020-04-07'),
+                    ('VTIQ010'		, N'Bài thi ASP.NET'		,	7			,	90		,   '10'		,'2020-04-08');
                     
 -- Thêm bảng ExamQuestion
 INSERT INTO ExamQuestion(QuestionID) 
@@ -253,8 +253,6 @@ VALUE 						(1),
 
 /*============================== TRUY VẤN DỮ LIỆU (DB_3_2) =============================*/
 /*======================================================================================*/
-
-
 -- Question 2: Lấy tất cả các phòng ban
 SELECT * FROM Department;
 
